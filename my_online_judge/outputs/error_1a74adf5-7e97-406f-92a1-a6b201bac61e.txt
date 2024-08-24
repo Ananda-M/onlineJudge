@@ -1,4 +1,0 @@
-  File "C:\Users\User\OneDrive\Desktop\onlineJudge\my_online_judge\codes\1a74adf5-7e97-406f-92a1-a6b201bac61e.py", line 1
-    print(&quotHello World&quot)
-          ^
-SyntaxError: invalid syntax
