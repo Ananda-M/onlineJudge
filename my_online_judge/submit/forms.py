@@ -5,6 +5,7 @@ LANGUAGE_CHOICES = [
     ("py", "Python"),
     ("c", "C"),
     ("cpp", "C++"),
+    ("js", "Javascript")
 ]
 
 

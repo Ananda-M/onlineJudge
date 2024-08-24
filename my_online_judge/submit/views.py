@@ -12,7 +12,7 @@ import re
 
 def sanitize_code(code: str) -> str:
     # Escape HTML special characters to prevent HTML injection
-    sanitized_code = html.escape(code)
+    sanitized_code = html.escape(code, quote=False)
 
     # Optional: Remove potential harmful content, e.g., <script> tags
     sanitized_code = re.sub(r'<script.*?>.*?</script>', '', sanitized_code, flags=re.S)
@@ -88,12 +88,31 @@ def run_code(language, code, input_data):
     open(error_file_path, 'w').close()
 
     try:
-        if language == "cpp":
+        if language == "c":
+            executable_path = os.path.join(codes_dir, unique)
+            # Compile the C code
+            subprocess.run(
+                ["clang", code_file_path, "-o", executable_path],
+                check=True
+            )
+            # Run the executable
+            with open(input_file_path, "r") as input_file, \
+                    open(output_file_path, "w") as output_file, \
+                    open(error_file_path, "w") as error_file:
+                subprocess.run(
+                    [executable_path],
+                    stdin=input_file,
+                    stdout=output_file,
+                    stderr=error_file,
+                    check=True,
+                    timeout=5
+                )
+        elif language == "cpp":
             executable_path = os.path.join(codes_dir, unique)
             # Compile the C++ code
             compile_result = subprocess.run(
                 ["clang++", code_file_path, "-o", executable_path],
-                check=True  # Raises an exception if the command fails
+                check=True  
             )
             # Run the executable
             with open(input_file_path, "r") as input_file, \
@@ -113,7 +132,20 @@ def run_code(language, code, input_data):
                     open(output_file_path, "w") as output_file, \
                     open(error_file_path, "w") as error_file:
                 subprocess.run(
-                    ["python3", code_file_path],
+                    ["python", code_file_path],
+                    stdin=input_file,
+                    stdout=output_file,
+                    stderr=error_file,
+                    check=True,
+                    timeout=5
+                )
+        elif language == "js":
+            # Execute the JavaScript code using Node.js
+            with open(input_file_path, "r") as input_file, \
+                    open(output_file_path, "w") as output_file, \
+                    open(error_file_path, "w") as error_file:
+                subprocess.run(
+                    ["node", code_file_path],
                     stdin=input_file,
                     stdout=output_file,
                     stderr=error_file,
