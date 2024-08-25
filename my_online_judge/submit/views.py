@@ -10,6 +10,8 @@ from pathlib import Path
 import html
 import re
 
+from django.contrib.auth.decorators import login_required
+
 def sanitize_code(code: str) -> str:
     # Escape HTML special characters to prevent HTML injection
     sanitized_code = html.escape(code, quote=False)
@@ -27,6 +29,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+@login_required
 def submit(request):
     if request.method == "POST":
         form = CodeSubmissionForm(request.POST)
